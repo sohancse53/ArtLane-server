@@ -48,7 +48,7 @@ admin.initializeApp({
 
 async function run() {
   try {
-    await client.connect();
+    // await client.connect();
     const db = client.db("ArtLane_DB");
     const artWorksCollection = db.collection("Artworks");
     const favoritesCollection = db.collection("favorites");
