@@ -171,6 +171,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/filter-by-category",async(req,res)=>{
+      const category = req.query.category;
+      const result = await artWorksCollection.find({category:category}).toArray();
+      res.send(result);
+    })
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
