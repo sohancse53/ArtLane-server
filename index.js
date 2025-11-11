@@ -32,23 +32,24 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 });
 
-const verifyFirebaseToken = async(req,res,next)=>{
-  const authorization = req.headers.authorization;
-  if(!authorization){
-    return res.status(401).send({message:'unauthorize access'});
-  }
-  const token = authorization.split(' ')[1];
- try {
-  const decode = await admin.auth().verifyIdToken(token);
-  req.token_email = decode.email;
-   next();
- } catch (error) {
-  console.log("Invalid token");
-   return res.status(401).send({message:'unauthorize access'});
- }
+
+// const verifyFirebaseToken = async(req,res,next)=>{
+//   const authorization = req.headers.authorization;
+//   if(!authorization){
+//     return res.status(401).send({message:'unauthorize access'});
+//   }
+//   const token = authorization.split(' ')[1];
+//  try {
+//   const decode = await admin.auth().verifyIdToken(token);
+//   req.token_email = decode.email;
+//    next();
+//  } catch (error) {
+//   console.log("Invalid token");
+//    return res.status(401).send({message:'unauthorize access'});
+//  }
   
 
-}
+// }
 
 async function run() {
   try {
