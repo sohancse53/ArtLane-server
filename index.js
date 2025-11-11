@@ -23,15 +23,11 @@ const client = new MongoClient(uri, {
   },
 });
 
-
-
-
 const serviceAccount = require("./firebase_auth_key.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
-
 
 // const verifyFirebaseToken = async(req,res,next)=>{
 //   const authorization = req.headers.authorization;
@@ -47,7 +43,6 @@ admin.initializeApp({
 //   console.log("Invalid token");
 //    return res.status(401).send({message:'unauthorize access'});
 //  }
-  
 
 // }
 
@@ -60,42 +55,44 @@ async function run() {
     //ekhan theke suru
 
     // ------------------get all artworks--------------
- app.get("/artworks",async (req, res) => {
-  const email = req.query.email;
-  // const query = {};
-  // if(email){
-  //   if(email !== req.token_email){
-  //     return res.status(403).send("forBidden Access")
-  //   }
-  //   query.userEmail = email;
-  // }
-  const query = email ? { userEmail: email } : {}; 
-  const result = await artWorksCollection.find(query).toArray();
-  res.send(result);
-});
+    app.get("/artworks", async (req, res) => {
+      const email = req.query.email;
+      // const query = {};
+      // if(email){
+      //   if(email !== req.token_email){
+      //     return res.status(403).send("forBidden Access")
+      //   }
+      //   query.userEmail = email;
+      // }
+      const query = email ? { userEmail: email } : {};
+      const result = await artWorksCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // ----------------post a art------------------
-    app.post("/artworks",async (req, res) => {
+    app.post("/artworks", async (req, res) => {
       const newArt = req.body;
       const result = await artWorksCollection.insertOne(newArt);
       res.send(result);
     });
 
     // ----------------delete a specific art------------------
-    app.delete("/artworks/:id",async (req, res) => {
-      const id = req.params.id
-      const result = await artWorksCollection.deleteOne({_id:new ObjectId(id)});
+    app.delete("/artworks/:id", async (req, res) => {
+      const id = req.params.id;
+      const result = await artWorksCollection.deleteOne({
+        _id: new ObjectId(id),
+      });
       res.send(result);
     });
     // ----------------update a specific art------------------
-    app.put("/update-artworks/:id",async (req, res) => {
-      const id = req.params.id
+    app.put("/update-artworks/:id", async (req, res) => {
+      const id = req.params.id;
       const updatedArt = req.body;
-      const query = {_id:new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const update = {
-        $set:updatedArt
-      }
-      const result = await artWorksCollection.updateOne(query,update);
+        $set: updatedArt,
+      };
+      const result = await artWorksCollection.updateOne(query, update);
       res.send(result);
     });
 
@@ -106,7 +103,7 @@ async function run() {
       res.send(result);
     });
     // ------------get specific art by id ---------
-    app.get("/artworks/:id",async (req, res) => {
+    app.get("/artworks/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await artWorksCollection.findOne(query);
@@ -114,7 +111,7 @@ async function run() {
     });
 
     // ---------------update likes-------------------
-    app.put("/artworks/:id",async (req, res) => {
+    app.put("/artworks/:id", async (req, res) => {
       const id = req.params.id;
 
       const query = { _id: new ObjectId(id) };
@@ -126,13 +123,13 @@ async function run() {
     });
 
     // -------------post to my favorite page------------
-    app.post("/favorites",async (req, res) => {
+    app.post("/favorites", async (req, res) => {
       const newArt = req.body;
       const result = await favoritesCollection.insertOne(newArt);
       res.send(result);
     });
     // -------------get by to my favorite page------------
-    app.get("/favorites",async (req, res) => {
+    app.get("/favorites", async (req, res) => {
       const favorite_by = req.query.favorite_by;
       const result = await favoritesCollection
         .find({ favorite_by: favorite_by })
@@ -140,7 +137,7 @@ async function run() {
       res.send(result);
     });
     // -------------delete a art from  my favorite page------------
-    app.delete("/favorites/:id",async (req, res) => {
+    app.delete("/favorites/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await favoritesCollection.deleteOne(query);
@@ -148,7 +145,7 @@ async function run() {
     });
 
     // -------------- get public visibility artworks--------------
-    app.get("/artworks-public",async (req, res) => {
+    app.get("/artworks-public", async (req, res) => {
       const result = await artWorksCollection
         .find({ visibility: "Public" })
         .toArray();
@@ -156,7 +153,7 @@ async function run() {
     });
 
     // -------------search by title api
-    app.get("/search-by-title",async (req, res) => {
+    app.get("/search-by-title", async (req, res) => {
       const title = req.query.title;
       const result = await artWorksCollection
         .find({ title: { $regex: title, $options: "i" } })
@@ -164,7 +161,7 @@ async function run() {
       res.send(result);
     });
     // -------------search by title artist name
-    app.get("/search-by-artist",async (req, res) => {
+    app.get("/search-by-artist", async (req, res) => {
       const artist = req.query.artist;
       const result = await artWorksCollection
         .find({ userName: { $regex: artist, $options: "i" } })
@@ -172,11 +169,13 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/filter-by-category",async(req,res)=>{
+    app.get("/filter-by-category", async (req, res) => {
       const category = req.query.category;
-      const result = await artWorksCollection.find({category:category}).toArray();
+      const result = await artWorksCollection
+        .find({ category: category })
+        .toArray();
       res.send(result);
-    })
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
@@ -192,5 +191,3 @@ run().catch(console.dir);
 app.listen(port, () => {
   console.log("server connected at port- ", port);
 });
-
-
