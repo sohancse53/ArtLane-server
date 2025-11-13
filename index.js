@@ -98,7 +98,7 @@ async function run() {
 
     // ------------get top 6 featured artworks by recent time---------
     app.get("/featured-artworks", async (req, res) => {
-      const cursor = artWorksCollection.find().sort({ time: -1 }).limit(6);
+      const cursor = artWorksCollection.find({ visibility: "Public" }).sort({ time: -1 }).limit(6);
       const result = await cursor.toArray();
       res.send(result);
     });
